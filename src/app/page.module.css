@@ -228,3 +228,14 @@
     transform: rotate(0deg);
   }
 }
+
+
+
+
+
+.jp-token {
+  background: none;
+}
+.jp-token:hover{ 
+  background: #64fffa39;
+}
