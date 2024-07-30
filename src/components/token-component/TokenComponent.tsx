@@ -9,7 +9,9 @@ function partOfSpeechToClass(pos:string) {
         "particle": "jp-token-adverb",
         "verb": "jp-token-adverb",
         "auxillary-verb": "jp-token-adverb",
-        "pronoun": "jp-token-"
+        "pronoun": "jp-token-pronoun",
+        "adjective": "jp-token-adjective"
+        // "pronoun": "jp-token-pronoun"
     };
     if(pos in map) return styles[pos];
     else return styles["unknown"];

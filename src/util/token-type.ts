@@ -1,5 +1,6 @@
 
 export interface JPToken {
     token: string,
-    type: string
+    type: string,
+    base?: string,
 };
