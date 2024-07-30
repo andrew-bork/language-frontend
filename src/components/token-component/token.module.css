@@ -1,0 +1,34 @@
+
+
+.adverb {
+    border-bottom: #ff6262 2px solid;
+}
+
+.noun {
+    border-bottom: #ffd062 2px solid;
+}
+
+.verb {
+    border-bottom: #72ff62 2px solid;
+}
+
+.pronoun {
+    border-bottom: #62b3ff 2px solid;
+}
+
+.auxillary-verb {
+    border-bottom: #6a62ff 2px solid;
+}
+
+.unknown {
+    /* border-bottom: #ffffff 2px solid; */
+}
+
+.jp-token {
+  line-height: 1.5;
+  background: none;
+  margin: 0 2px;
+}
+.jp-token:hover{ 
+  background: #64fffa39;
+}

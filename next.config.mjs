@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/tokenize/jp',
-        destination: 'http://localhost:8000/tokenize/jp',
+        destination: 'http://127.0.0.1:8000/tokenize/jp',
       },
     ]
   },

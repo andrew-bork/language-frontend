@@ -4,6 +4,10 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import { useEffect, useMemo, useState } from "react";
 
+import jpTokenStyles from "./jp-token.module.css"
+import TokenComponent from "@/components/token-component/TokenComponent";
+import TokenPreview from "@/components/token-preview/TokenPreview";
+
 
 const text = `やっと眼を覚ましたかい　それなのになぜ眼も合わせやしないんだい？
 「遅いよ」と怒る君　これでもやれるだけ飛ばしてきたんだよ
@@ -46,6 +50,8 @@ const text = `やっと眼を覚ましたかい　それなのになぜ眼も合
 
 export default function Home() {
 
+    const [ selected, setSelected ] = useState<any|null>(null);
+
     const lines = useMemo(() => {
         return text.split("\n").map((line) => {
             return {
@@ -57,14 +63,16 @@ export default function Home() {
 
     return (
         <main className={styles.main}>
-        <div className={styles.description}>
+        
+        <div>
             {/* <h3>Search</h3> */}
             {/* <input /> */}
 
             <p>
-                {lines.map((line, i) => (<LineComponent key={i} text={line.text}/>))}
+                {lines.map((line, i) => (<LineComponent key={i} text={line.text} setSelected={setSelected}/>))}
             </p>
         </div>
+        <TokenPreview token={selected}/>
     </main>);
 }
 
@@ -83,14 +91,14 @@ function useTokenization(text : string) : any[]|null {
     return tokenization
 }
 
-function LineComponent({ text } : { text: string }) {
+function LineComponent({ text, setSelected } : { text: string, setSelected:any }) {
 
     const tokenization = useTokenization(text);
 
 
     if(tokenization)
         return <>
-            {tokenization.map((token:any, i) => (<TokenComponent token={token} key={i} />))}
+            {tokenization.map((token:any, i) => (<TokenComponent token={token} key={i} setSelected={setSelected}/>))}
             <br/>
         </>
     else
@@ -99,10 +107,3 @@ function LineComponent({ text } : { text: string }) {
             <br/>
         </>
 }
-
-function TokenComponent({ token } : { token : any }) {
-    return <span className={styles["jp-token"]}>{token[0]}</span>
-}
-// function JapaneseViewer {
-
-// }
