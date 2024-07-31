@@ -1,5 +1,7 @@
 import { JPToken } from "@/util/token-type";
 import styles from "./token.module.css"
+import { useDefinition } from "../token-context/TokenContext";
+import { FuriganaView } from "../token-preview/TokenPreview";
 
 
 function partOfSpeechToClass(pos:string) {
@@ -19,6 +21,7 @@ function partOfSpeechToClass(pos:string) {
 
 
 export default function TokenComponent({ token, setSelected } : { token : JPToken, setSelected:  undefined|((a:JPToken)=>void) }) {
+    const definitions = useDefinition(token);
 
 
     return <span className={`${styles["jp-token"]} ${partOfSpeechToClass(token.type)}`}
@@ -26,6 +29,6 @@ export default function TokenComponent({ token, setSelected } : { token : JPToke
                 if(setSelected) setSelected(token);
             }}
         >
-        {token.token}
+        <FuriganaView base={token.base} text={token.token} reading={(definitions ? definitions[0].readings[0] : "")}/>
     </span>
 }

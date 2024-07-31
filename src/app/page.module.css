@@ -1,25 +1,25 @@
 .main {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
   padding: 6rem;
-  min-height: 100vh;
+  max-height: 100vh;
+  position: relative;
+  /* font-size: 24px; */
+
 }
 
-
+.main>div {
+  overflow: auto;
+  max-height: 80vh;
+  padding: 20px;
+}
 
 .preview {
   font-size: 32px;
 }
 
-
-
-.jp-token {
-  line-height: 1.5;
-  background: none;
-  margin: 0 2px;
-}
-.jp-token:hover{ 
-  background: #64fffa39;
+.text {
+  font-size: 16px;
 }

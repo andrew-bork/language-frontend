@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../lyrics-scraper"
+		},
+		{
+			"path": "../dictionary"
 		}
 	]
 }

@@ -1,22 +1,23 @@
 import { JPToken } from "@/util/token-type"
 import styles from "./token-preview.module.css"
 import React, { useEffect, useMemo, useState } from "react";
+import { useDefinition } from "../token-context/TokenContext";
 
 
-function useDefinition(term:string|null|undefined) {
-    const [ definition, setDefinition ] = useState<any|null>(null);
-    useEffect(() =>{ 
-        setDefinition(null);
-        if(term) {
-            fetch(`/api/term/jp/${encodeURIComponent(term)}`).then((res) => res.json()).then((definition) => {
-                setDefinition(definition.result);
-                // console.log(definition);
-            });
-        }
-    }, [term])
+// function useDefinition(term:string|null|undefined) {
+//     const [ definition, setDefinition ] = useState<any|null>(null);
+//     useEffect(() =>{ 
+//         setDefinition(null);
+//         if(term) {
+//             fetch(`/api/term/jp/${encodeURIComponent(term)}`).then((res) => res.json()).then((definition) => {
+//                 setDefinition(definition.result);
+//                 // console.log(definition);
+//             });
+//         }
+//     }, [term])
 
-    return definition;
-}
+//     return definition;
+// }
 
 const kanjiRegex = /([\u4e00-\u9faf]+)|([^\u4e00-\u9faf]+)/g;
 
@@ -46,6 +47,7 @@ function getKanjiReading(kanji:string, reading:string) {
                 out[matches[i-1][1]] = matches2[i];
                 
         }
+        // console.log(matches2, matches);
     }
     return out;
 }
@@ -69,7 +71,7 @@ function getKanji(kanji:string) {
     });
 }
 
-function FuriganaView({ text, reading, base } : { text:string, reading:string|null|undefined, base:string|null|undefined }) {
+export function FuriganaView({ text, reading, base } : { text:string, reading:string|null|undefined, base:string|null|undefined }) {
     
     const kanji = useMemo(() => {
         return getKanji(text);
@@ -113,21 +115,46 @@ function DefinitionView({ definitions } : { definitions: any[]|undefined}) {
 
 
 export default function TokenPreview({ token } : { token: null|JPToken}) {
-    const definition = useDefinition((token?.type === "verb" ? token.base : token?.token));
+    const definitions = useDefinition(token);
     // console.log(generateFurigana("立ち向かう", "たちむかう"));
-    if(token)
-        return <div>
+    if(token && definitions)
+        return <div className={styles["container"]}>
+            <ul className={styles["readings-list"]}>
+                {
+                    definitions.map((definition, i) => {
+                        return <React.Fragment key={i}>
+                            {(i > 0 ? <hr/> : <></>)}
+                            <li>
+                                <span className={styles["preview"]}>
+                                    <strong><FuriganaView text={token.token} reading={definition.readings[0]} base={token.base}/></strong>
+                                </span>
+                                {((token.type === "verb" && token.base !== token.token) ? 
+                                    <span>({(token.base ?? "")})</span> : 
+                                    <></>
+                                )}
+                                {/* <p>{definition.readings[0] ?? "No Reading Found."}</p> */}
+                                <p><i>{token.type}</i></p>
+                                <br/>
+                                <DefinitionView definitions={definition.definitions}/>
+                            </li>
+                        </React.Fragment>
+                    })
+                }
+            </ul>
+        </div>
+    else if(token) {
+        return <div className={styles["container"]}>
             <span className={styles["preview"]}>
-                <strong><FuriganaView text={token.token} reading={definition?.readings[0]} base={token.base}/></strong>
+                <strong>{token.token}</strong>
             </span>
             {((token.type === "verb" && token.base !== token.token) ? 
                 <span>({(token.base ?? "")})</span> : 
                 <></>
             )}
-            <p>{definition?.readings[0] ?? "No Reading Found."}</p>
             <p><i>{token.type}</i></p>
-            <DefinitionView definitions={definition?.definitions}/>
+            <p>No definitions found.</p>
         </div>
+    }
     else
         return <div></div>
 } 

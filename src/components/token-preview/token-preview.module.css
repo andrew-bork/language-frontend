@@ -4,4 +4,17 @@
     font-size: 32px;
 }
   
-  
+.container {
+    width: 400px;
+    height: 80%;
+    border: #a9a9a9 1px solid;
+    border-radius: 8px;
+    padding: 64px;
+}
+
+.readings-list {
+    list-style: none;
+}
+.readings-list>li {
+    padding: 24px;
+}
