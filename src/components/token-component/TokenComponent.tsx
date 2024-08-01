@@ -29,6 +29,6 @@ export default function TokenComponent({ token, setSelected } : { token : JPToke
                 if(setSelected) setSelected(token);
             }}
         >
-        <FuriganaView base={token.base} text={token.token} reading={(definitions ? definitions[0].readings[0] : "")}/>
+        <FuriganaView token={token} definition={(definitions ? definitions[0] : null)}/>
     </span>
 }

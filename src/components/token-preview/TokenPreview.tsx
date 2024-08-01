@@ -1,7 +1,7 @@
 import { JPToken } from "@/util/token-type"
 import styles from "./token-preview.module.css"
 import React, { useEffect, useMemo, useState } from "react";
-import { useDefinition } from "../token-context/TokenContext";
+import { Definition, useAllReadings, useDefinition, useKanjiKanaTokens, useReadings } from "../token-context/TokenContext";
 
 
 // function useDefinition(term:string|null|undefined) {
@@ -19,84 +19,95 @@ import { useDefinition } from "../token-context/TokenContext";
 //     return definition;
 // }
 
-const kanjiRegex = /([\u4e00-\u9faf]+)|([^\u4e00-\u9faf]+)/g;
+/*
+Hiragana ( 3040 - 309f)
+Katakana ( 30a0 - 30ff)
+*/
 
-function getKanjiReading(kanji:string, reading:string) {
+function getKanjiKanaTokens(kanji:string) {
 
-    const matches = Array.from(kanji.matchAll(kanjiRegex));
-    let furiganaRegex = "";
-    let lastIsKana = false;
-    matches.forEach((match) => {
-        if(match[1]) {
-            furiganaRegex += "(.+)";
-            lastIsKana = false;
+    const matches = Array.from(kanji.matchAll(/([\u4e00-\u9faf])([\u3040-\u309f]*)|([^\u4e00-\u9faf]+)/g));
+ 
+    return matches.map((match) => {
+        if(match[3]) {
+            return {
+                kanji: "",
+                kana: match[3],
+            };
+        }
+        if(match[2]) {
+            return {
+                kanji: match[1],
+                kana: match[2],
+            }
         }else {
-            furiganaRegex += `(${match[2]})`;
-            lastIsKana = true;
+            return {
+                kanji: match[1],
+                kana: ""
+            };
         }
     });
-    // kanji.replaceAll(kanjiRegex, "(.+)");
-    const regex = new RegExp(furiganaRegex);
-    const matches2 = reading.match(regex);
-
-    let out : any = {};
-
-    if(matches2){
-        for(let i = 1; i < matches2.length; i ++) {
-            if(matches[i-1][1])
-                out[matches[i-1][1]] = matches2[i];
-                
-        }
-        // console.log(matches2, matches);
-    }
-    return out;
 }
 
 function getKanji(kanji:string) {
-    const matches = Array.from(kanji.matchAll(kanjiRegex));
-    return matches.map((match) => {
-        const out = {
-            isKanji: false,
-            kanji: "",
-            kana: ""
-        }
-        if(match[1]) {
-            out.isKanji = true;
-            out.kanji = match[1];
-        }
-        else {
-            out.kana = match[2];
-        }
-        return out;
+    return Array.from(kanji.matchAll(/([\u4e00-\u9faf])/g)).map((match) => {
+        return match[0];
     });
 }
 
-export function FuriganaView({ text, reading, base } : { text:string, reading:string|null|undefined, base:string|null|undefined }) {
+export function FuriganaView({ token, definition } : { token:JPToken, definition:Definition|null }) {
     
-    const kanji = useMemo(() => {
-        return getKanji(text);
-    }, [text]);
-    
-    const furigana = useMemo(() => {
-        let k = base ?? text;
-        if(reading)
-            return getKanjiReading(k, reading);
-        return null;
-    }, [text, reading, base]);
+    const tokens = useKanjiKanaTokens(token.token);
+    const { readings } = useReadings(token.base ?? token.token);
+    if(0 < readings.length) {
+        if(definition) {
+            // console.log(token);
+            const reading = readings.find((reading) => definition.readings.some((_reading) => _reading.startsWith(reading.reading)));
+            if(reading) {
+                return <ruby>
+                    {tokens.map((a, i) => (<React.Fragment key={i}>
+                        {a.kanji !== "" ? 
+                        <>{a.kanji}<rt>{reading.characterReadings[a.kanji]}</rt>{a.kana}<rt></rt></>:
+                        <>{a.kana}<rt></rt></>
+                        }
+                    </React.Fragment>))}
+                </ruby>
+            }else {
+                return <ruby>
+                    {token.token}<rt>{definition.readings[0]}</rt>
+                </ruby>
+            }
+        }else {
+            const reading = readings[0];
+            return <ruby>
+                {tokens.map((a, i) => (<React.Fragment key={i}>
+                    {a.kanji !== "" ? 
+                    <>{a.kanji}<rt>{reading.characterReadings[a.kanji]}</rt>{a.kana}<rt></rt></>:
+                    <>{a.kana}<rt></rt></>
+                    }
+                </React.Fragment>))}
+            </ruby>
+        }
 
-
-    if(furigana) {
-        return <ruby>
-            {kanji.map((a, i) => (<React.Fragment key={i}>
-                {a.isKanji ? 
-                <>{a.kanji}<rt>{furigana[a.kanji]}</rt></> :
-                <>{a.kana}<rt></rt></>
-                }
-            </React.Fragment>))}
-        </ruby>
-    }else {
-        return <>{text}</>
     }
+    // console.log(possibleReadings);
+
+    // if(furigana) {
+    //     return <>
+    //         {kanji.map((a, i) => (<React.Fragment key={i}>
+    //             {a.isKanji ? 
+    //             <>{a.kanji}<rt>{furigana[a.kanji]}</rt></> :
+    //             <>{a.kana}<rt></rt></>
+    //             }
+    //         </React.Fragment>))}
+    //     </>
+    // }else {
+    // if (kanji.length === 0) {
+    //     console.log(readings)
+    //     return <>{token.token}</>
+    // }
+    return <>{token.token}</>
+    // }
 }
 
 function DefinitionView({ definitions } : { definitions: any[]|undefined}) {
@@ -126,7 +137,7 @@ export default function TokenPreview({ token } : { token: null|JPToken}) {
                             {(i > 0 ? <hr/> : <></>)}
                             <li>
                                 <span className={styles["preview"]}>
-                                    <strong><FuriganaView text={token.token} reading={definition.readings[0]} base={token.base}/></strong>
+                                    <strong><FuriganaView token={token} definition={definition}/></strong>
                                 </span>
                                 {((token.type === "verb" && token.base !== token.token) ? 
                                     <span>({(token.base ?? "")})</span> : 

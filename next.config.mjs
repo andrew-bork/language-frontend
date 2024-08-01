@@ -10,6 +10,10 @@ const nextConfig = {
         source: '/api/term/jp/:term',
         destination: 'http://127.0.0.1:8001/term/jp/:term',
       },
+      {
+        source: '/api/kanji/jp/:term',
+        destination: 'http://127.0.0.1:8000/kanji/jp/:term',
+      },
     ]
   },
 };
