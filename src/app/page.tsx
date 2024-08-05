@@ -125,7 +125,8 @@ const text5 = `エペは、伝統的なフェンシングで用いられてい�
 攻撃権の概念も存在しない。
 さらに後述のように有効面が広いため、
 エペの試合は極端に防御的で慎重なものになる傾向がある。`;
-const text = text5;
+const text6 = `折り紙 大田`;
+const text = text6;
 
 
 export default function Home() {
@@ -149,7 +150,9 @@ export default function Home() {
                     {/* <input /> */}
 
                     <p>
-                        {lines.map((line, i) => (<LineComponent key={i} text={line.text} setSelected={setSelected}/>))}
+                        <ruby>
+                            {lines.map((line, i) => (<LineComponent key={i} text={line.text} setSelected={setSelected}/>))}
+                        </ruby>
                     </p>
                 </div>
                 <TokenPreview token={selected}/>

@@ -20,14 +20,12 @@ function partOfSpeechToClass(pos:string) {
 }
 
 
-export default function TokenComponent({ token, setSelected } : { token : JPToken, setSelected:  undefined|((a:JPToken)=>void) }) {
+export default function TokenComponent({ token, setSelected, seperate  } : { token : JPToken, setSelected:  undefined|((a:JPToken)=>void), seperate?: boolean }) {
     const definitions = useDefinition(token);
 
 
-    return <span className={`${styles["jp-token"]} ${partOfSpeechToClass(token.type)}`}
-            onClick={() => {
-                if(setSelected) setSelected(token);
-            }}
+    return <span className={`${styles["jp-token"]} ${partOfSpeechToClass(token.type)} ${(seperate ? styles["seperate"] : "")}`}
+            onClick={setSelected}
         >
         <FuriganaView token={token} definition={(definitions ? definitions[0] : null)}/>
     </span>

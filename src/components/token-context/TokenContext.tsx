@@ -114,6 +114,39 @@ export function useKanjiKanaTokens(phrase:string|null) {
     }, [phrase]);
 }
 
+
+function rendaku(reading:string) {
+    const rendakuMap : { [x: string] : string } = {
+        "か":"が",
+        "き":"ぎ",
+        "く":"ぐ",
+        "け":"げ",
+        "こ":"ご",
+        
+        "さ":"ざ",
+        "し":"じ",
+        "す":"ず",
+        "せ":"ぜ",
+        "そ":"ぞ",
+        
+        "た":"だ",
+        "ち":"じ",
+        "つ":"ず",
+        "て":"で",
+        "と":"ど",
+        
+        "は":"ば",
+        "ひ":"び",
+        "ふ":"ぶ",
+        "へ":"べ",
+        "ほ":"ぼ",
+    }
+    if(reading.length === 0) return null;
+    if(reading[0] in rendakuMap)
+        return rendakuMap[reading[0]] + reading.slice(1);
+    return null;
+}
+
 export function useReadings(phrase:string|null) {
     const { characters, setCharacters } = useContext(_TokenContext);
 
@@ -200,10 +233,10 @@ export function useReadings(phrase:string|null) {
         // console.log(characterReadings);
 
         // tokens.forEach((token))
-        let possible: {reading: string, characterReadings: { [x:string] : string} }[] = [{reading:"", characterReadings:{}}]
+        let possible: {reading: string, rendaku: boolean, characterReadings: { [x:string] : string} }[] = [{reading:"", characterReadings:{}}]
         for(let i = 0; i < tokens.length; i ++) {
             if(tokens[i].kanji !== "") {
-                let newPossible: {reading: string, characterReadings: { [x:string] : string} }[] = [];
+                let newPossible: {reading: string, rendaku: boolean, characterReadings: { [x:string] : string} }[] = [];
                 possible.forEach((possiblilty) => {
                     characterReadings[tokens[i].kanji]?.forEach((reading) => {
                         const a : { [x:string] : string}  = {
@@ -212,8 +245,21 @@ export function useReadings(phrase:string|null) {
                         a[tokens[i].kanji] = reading.reading;
                         newPossible.push({
                             reading: possiblilty.reading + reading.reading + tokens[i].kana,
-                            characterReadings: a
+                            characterReadings: a,
+                            rendaku: false,
                         });
+                        const rendakued = rendaku(reading.reading);
+                        if(rendakued) {
+                            const a : { [x:string] : string}  = {
+                                ...possiblilty.characterReadings
+                            };
+                            a[tokens[i].kanji] = rendakued;
+                            newPossible.push({
+                                reading: possiblilty.reading + rendakued + tokens[i].kana,
+                                characterReadings: a,
+                                rendaku: true,
+                            });
+                        }
                     });
                 });
                 possible = newPossible;
@@ -222,11 +268,10 @@ export function useReadings(phrase:string|null) {
                     possiblilty.reading += tokens[i].kana;
                 });
             }
-
         }
         // console.log(characters[tokens[1].kanji]);
         // console.log(characters);
-
+        // console.log(possible);
         return possible;
 
     }, [charactersInPhrase, characters, tokens]);
