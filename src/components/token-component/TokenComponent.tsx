@@ -25,7 +25,7 @@ export default function TokenComponent({ token, setSelected, seperate  } : { tok
 
 
     return <span className={`${styles["jp-token"]} ${partOfSpeechToClass(token.type)} ${(seperate ? styles["seperate"] : "")}`}
-            onClick={setSelected}
+            onClick={() => setSelected(token)}
         >
         <FuriganaView token={token} definition={(definitions ? definitions[0] : null)}/>
     </span>

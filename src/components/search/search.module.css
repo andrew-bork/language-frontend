@@ -1,0 +1,32 @@
+
+
+.text-input {
+    flex-grow: 2;
+    background: none;
+    font-size: inherit;
+}
+.text-input:focus {
+    outline: none;
+    border: none;
+}
+.search-section {
+    position: relative;
+    border: #a9a9a9 1px solid;
+    border-radius: 8px;
+    margin: 24px;
+    padding: 8px;
+    min-width: 300px;
+    display: flex;
+    white-space: pre;
+    font-size: 24px;
+    flex-direction: row;
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+.submit {
+    min-width: 100px;
+    font-size: 20px;
+    margin-left:8px;
+
+    padding: 8px;
+}

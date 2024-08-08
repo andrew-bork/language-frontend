@@ -1,11 +1,18 @@
+import { getCharacters, getKanjiKanaTokens, rendaku } from "@/util/furigana";
 import { JPToken } from "@/util/token-type";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { toHiragana, toKana } from "wanakana";
 
+export type Sense = {
+    pos: string[],
+    definitions: string[],
+    misc: string[]
+};
+
 export type Definition = {
     readings: string[],
     token: string,
-    definitions: string[],
+    senses: Sense[]
 };
 
 export type DefinitionMap = {
@@ -71,80 +78,11 @@ export function useDefinition(token:JPToken|null) {
 }
 
 
-
-
-function getKanjiKanaTokens(kanji:string) {
-
-    const matches = Array.from(kanji.matchAll(/([\u4e00-\u9faf])([\u3040-\u309f]*)|([^\u4e00-\u9faf]+)/g));
- 
-    return matches.map((match) => {
-        if(match[3]) {
-            return {
-                kanji: "",
-                kana: match[3],
-            };
-        }
-        if(match[2]) {
-            return {
-                kanji: match[1],
-                kana: match[2],
-            }
-        }else {
-            return {
-                kanji: match[1],
-                kana: ""
-            };
-        }
-    });
-}
-
-function getCharacters(kanji:string) {
-    return Array.from(kanji.matchAll(/([\u4e00-\u9faf])/g)).map((match) => {
-        return match[0];
-    });
-}
-
-
-
-
 export function useKanjiKanaTokens(phrase:string|null) {
     
     return useMemo(() => {
         return getKanjiKanaTokens(phrase ?? "");
     }, [phrase]);
-}
-
-
-function rendaku(reading:string) {
-    const rendakuMap : { [x: string] : string } = {
-        "か":"が",
-        "き":"ぎ",
-        "く":"ぐ",
-        "け":"げ",
-        "こ":"ご",
-        
-        "さ":"ざ",
-        "し":"じ",
-        "す":"ず",
-        "せ":"ぜ",
-        "そ":"ぞ",
-        
-        "た":"だ",
-        "ち":"じ",
-        "つ":"ず",
-        "て":"で",
-        "と":"ど",
-        
-        "は":"ば",
-        "ひ":"び",
-        "ふ":"ぶ",
-        "へ":"べ",
-        "ほ":"ぼ",
-    }
-    if(reading.length === 0) return null;
-    if(reading[0] in rendakuMap)
-        return rendakuMap[reading[0]] + reading.slice(1);
-    return null;
 }
 
 export function useReadings(phrase:string|null) {

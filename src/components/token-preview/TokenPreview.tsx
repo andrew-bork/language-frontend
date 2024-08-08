@@ -1,59 +1,9 @@
-import { JPToken } from "@/util/token-type"
+import { JPToken, PartOfSpeech } from "@/util/token-type"
 import styles from "./token-preview.module.css"
 import React, { useEffect, useMemo, useState } from "react";
-import { Definition, useAllReadings, useDefinition, useKanjiKanaTokens, useReadings } from "../token-context/TokenContext";
+import { Definition, useDefinition, useKanjiKanaTokens, useReadings } from "../token-context/TokenContext";
 
 
-// function useDefinition(term:string|null|undefined) {
-//     const [ definition, setDefinition ] = useState<any|null>(null);
-//     useEffect(() =>{ 
-//         setDefinition(null);
-//         if(term) {
-//             fetch(`/api/term/jp/${encodeURIComponent(term)}`).then((res) => res.json()).then((definition) => {
-//                 setDefinition(definition.result);
-//                 // console.log(definition);
-//             });
-//         }
-//     }, [term])
-
-//     return definition;
-// }
-
-/*
-Hiragana ( 3040 - 309f)
-Katakana ( 30a0 - 30ff)
-*/
-
-function getKanjiKanaTokens(kanji:string) {
-
-    const matches = Array.from(kanji.matchAll(/([\u4e00-\u9faf])([\u3040-\u309f]*)|([^\u4e00-\u9faf]+)/g));
- 
-    return matches.map((match) => {
-        if(match[3]) {
-            return {
-                kanji: "",
-                kana: match[3],
-            };
-        }
-        if(match[2]) {
-            return {
-                kanji: match[1],
-                kana: match[2],
-            }
-        }else {
-            return {
-                kanji: match[1],
-                kana: ""
-            };
-        }
-    });
-}
-
-function getKanji(kanji:string) {
-    return Array.from(kanji.matchAll(/([\u4e00-\u9faf])/g)).map((match) => {
-        return match[0];
-    });
-}
 
 export function FuriganaView({ token, definition } : { token:JPToken, definition:Definition|null }) {
     
@@ -110,19 +60,36 @@ export function FuriganaView({ token, definition } : { token:JPToken, definition
     // }
 }
 
-function DefinitionView({ definitions } : { definitions: any[]|undefined}) {
-    if(definitions)
-        return <ol>
-            {definitions.map((def, i) => (<li key={i}>
-                <p>
-                    {def}
-                </p>
-            </li>))}
+function DefinitionView({ token, definition } : { token: JPToken, definition : Definition}) {
+    return <>
+        <span className={styles["preview"]}>
+        <strong><FuriganaView token={token} definition={definition}/></strong>
+        </span>
+        {/* {((token.type === "verb" && token.base !== token.token) ? 
+            <span>({(token.base ?? "")})</span> : 
+            <></>
+        )} */}
+        <br/>
+        <ol>
+            {definition.senses.map((sense, i) => (<React.Fragment  key={i}>
+                <p className={styles["pos"]}>{sense.pos.map((pos)=>PartOfSpeech.getDisplayString(pos.slice(1,pos.length-1))).join(", ")}</p>
+                <li className={styles["sense"]}>
+                    <p>
+                        {sense.definitions.map((definition) => definition).join("; ")}
+                    </p>
+                </li>
+            </React.Fragment>
+            ))}
         </ol>
-    else return <p>
-        No definitions found.
-    </p>
+    </>
 }
+
+
+
+
+
+
+
 
 
 export default function TokenPreview({ token } : { token: null|JPToken}) {
@@ -136,17 +103,7 @@ export default function TokenPreview({ token } : { token: null|JPToken}) {
                         return <React.Fragment key={i}>
                             {(i > 0 ? <hr/> : <></>)}
                             <li>
-                                <span className={styles["preview"]}>
-                                    <strong><FuriganaView token={token} definition={definition}/></strong>
-                                </span>
-                                {((token.type === "verb" && token.base !== token.token) ? 
-                                    <span>({(token.base ?? "")})</span> : 
-                                    <></>
-                                )}
-                                {/* <p>{definition.readings[0] ?? "No Reading Found."}</p> */}
-                                <p><i>{token.type}</i></p>
-                                <br/>
-                                <DefinitionView definitions={definition.definitions}/>
+                                <DefinitionView token={token} definition={definition}/>
                             </li>
                         </React.Fragment>
                     })

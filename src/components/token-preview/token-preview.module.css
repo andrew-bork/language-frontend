@@ -18,3 +18,14 @@
 .readings-list>li {
     padding: 24px;
 }
+
+.pos {
+    font-size: 12px;
+}
+.sense {
+    color: #838383;
+}
+
+.sense p {
+    color: #cdcdcd;
+}
