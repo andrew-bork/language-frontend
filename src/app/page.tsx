@@ -126,7 +126,7 @@ const text5 = `エペは、伝統的なフェンシングで用いられてい�
 さらに後述のように有効面が広いため、
 エペの試合は極端に防御的で慎重なものになる傾向がある。`;
 const text6 = `折り紙 大田`;
-const text = text2;
+const text = text1;
 
 
 export default function Home() {

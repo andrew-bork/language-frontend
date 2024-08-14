@@ -7,6 +7,7 @@ import React from "react";
 import { toHiragana } from "wanakana";
 import styles from "./page.module.css"
 import { PartOfSpeech } from "@/util/token-type";
+import { ConjugationSelector } from "./conjugator";
 
 
 
@@ -152,8 +153,10 @@ function getVerbForms(term:string, type:string) {
             kat: base + "れ",
             mei: base + "ろう",
             vol: base + "よう",
-            onbin: []
+            onbin: { te: base + "て", ta: base + "た"}
         };
+
+        return result;
     }
 
     return null;
@@ -205,6 +208,10 @@ async function FormTable({ forms } : { forms: { base: string, miz: string, ren: 
     </table>
 }
 
+function sliceends(s:string) {
+    return s.slice(1, s.length-1);
+}
+
 
 async function DefinitionView({ term, definition } : { term: string, definition: Definition}) {
     const tokens = getKanjiKanaTokens(term);
@@ -220,24 +227,16 @@ async function DefinitionView({ term, definition } : { term: string, definition:
     const sense = definition.senses[0];
     console.log(sense.pos.find((a) => (a[1] === "v")));
     const forms = getVerbForms(term, sense.pos.find((a) => (a[1] === "v"))?.substring(1) ?? "");
-    
+    console.log(forms);
     if(reading) {
         return <li>
             <span className={styles["term-display"]}>
                 <FuriganaView tokens={tokens} readings={reading.characterReadings}/>
             </span>
                 <ol>
-                    {definition.senses.map((sense, i) => (<React.Fragment  key={i}>
-                        <p className={styles["pos"]}>{sense.pos.map((pos)=>PartOfSpeech.getDisplayString(pos.slice(1,pos.length-1))).join(", ")}</p>
-                        <li className={styles["sense"]}>
-                            <p>
-                                {sense.definitions.map((definition) => definition).join("; ")}
-                            </p>
-                        </li>
-                    </React.Fragment>
-                    ))}
-
                     {(forms ? <FormTable forms={forms}/> : <></>)}
+                    <ConjugationSelector term={term} type={sliceends(sense.pos.find((a) => (a[1] === "v")) ?? "")}/>
+                    
                 </ol>
         </li>
     }else {
@@ -248,15 +247,9 @@ async function DefinitionView({ term, definition } : { term: string, definition:
                 <FuriganaView tokens={[{kanji: term, kana:""}]} readings={a}/>
             </span>
                 <ol>
-                    {definition.senses.map((sense, i) => (<React.Fragment  key={i}>
-                        <p className={styles["pos"]}>{sense.pos.map((pos)=>PartOfSpeech.getDisplayString(pos.slice(1,pos.length-1))).join(", ")}</p>
-                        <li className={styles["sense"]}>
-                            <p>
-                                {sense.definitions.map((definition) => definition).join("; ")}
-                            </p>
-                        </li>
-                    </React.Fragment>
-                    ))}
+                    {(forms ? <FormTable forms={forms}/> : <></>)}
+                    <ConjugationSelector term={term} type={sliceends(sense.pos.find((a) => (a[1] === "v")) ?? "")}/>
+
                 </ol>
         </li>
     }

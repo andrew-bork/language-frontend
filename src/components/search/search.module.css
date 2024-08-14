@@ -19,7 +19,7 @@
     display: flex;
     white-space: pre;
     font-size: 24px;
-    flex-direction: row;
+    flex-direction: column;
     /* align-items: center; */
     /* justify-content: center; */
 }
@@ -29,4 +29,22 @@
     margin-left:8px;
 
     padding: 8px;
+}
+
+.text-zone {
+    display: flex;
+    flex-direction: row;
+}
+.drop-zone {
+    border: 2px dashed #6a6a6a;
+    height: 200px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden {
+    visibility: hidden;
+    display: none;
 }

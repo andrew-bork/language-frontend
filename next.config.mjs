@@ -14,6 +14,11 @@ const nextConfig = {
         source: '/api/kanji/jp/:term',
         destination: 'http://127.0.0.1:8000/kanji/jp/:term',
       },
+      {
+        source: '/api/image/ocr',
+        destination: 'http://127.0.0.1:8000/image/ocr',
+
+      }
     ]
   },
 };

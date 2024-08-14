@@ -8,7 +8,7 @@ export type Sense = {
 
 export type Definition = {
     readings: string[],
-    token: string,
+    kanjis: string[],
     senses: Sense[]
 };
 
@@ -56,6 +56,173 @@ export function getCharacters(kanji:string) {
         return match[0];
     });
 }
+
+export function shiftColumn(initial:string, final:string) {
+    const initialMap : { [x: string] : string }= {
+        "か":"k",
+        "き":"k",
+        "く":"k",
+        "け":"k",
+        "こ":"k",
+
+        "が":"g",
+        "ぎ":"g",
+        "ぐ":"g",
+        "げ":"g",
+        "ご":"g",
+
+        "さ":"s",
+        "し":"s",
+        "す":"s",
+        "せ":"s",
+        "そ":"s",
+
+        "ざ":"z",
+        "じ":"z",
+        "ず":"z",
+        "ぜ":"z",
+        "ぞ":"z",
+
+        "た":"t",
+        "ち":"t",
+        "つ":"t",
+        "て":"t",
+        "と":"t",
+
+        "だ":"d",
+        "ぢ":"d",
+        "づ":"d",
+        "で":"d",
+        "ど":"d",
+
+        "な":"n",
+        "に":"n",
+        "ぬ":"n",
+        "ね":"n",
+        "の":"n",
+
+        "ま":"m",
+        "み":"m",
+        "む":"m",
+        "め":"m",
+        "も":"m",
+
+        "は":"h",
+        "ひ":"h",
+        "ふ":"h",
+        "へ":"h",
+        "ほ":"h",
+
+        "ば":"b",
+        "び":"b",
+        "ぶ":"b",
+        "べ":"b",
+        "ぼ":"b",
+
+        "ぱ":"p",
+        "ぴ":"p",
+        "ぷ":"p",
+        "ぺ":"p",
+        "ぽ":"p",
+
+        "わ":"w",
+        "を":"w",
+    };
+
+    initial = (initial in initialMap ? initialMap[initial] : initial);
+
+    const columnMap : { [x: string] : { [x: string] : string } }= {
+        "k": {
+            "a": "か",
+            "i": "き",
+            "u": "く",
+            "e": "け",
+            "o": "こ"
+        },
+        "g": {
+            "a": "が",
+            "i": "ぎ",
+            "u": "ぐ",
+            "e": "げ",
+            "o": "ご"
+        },
+        "s": {
+            "a": "さ",
+            "i": "し",
+            "u": "す",
+            "e": "せ",
+            "o": "そ"
+        },
+        "z": {
+            "a": "ざ",
+            "i": "じ",
+            "u": "ず",
+            "e": "ぜ",
+            "o": "ぞ"
+        },
+        "t": {
+            "a": "た",
+            "i": "ち",
+            "u": "つ",
+            "e": "て",
+            "o": "と"
+        },
+        "d": {
+            "a": "だ",
+            "i": "ぢ",
+            "u": "づ",
+            "e": "で",
+            "o": "ど"
+        },
+        "n": {
+            "a": "な",
+            "i": "に",
+            "u": "ぬ",
+            "e": "ね",
+            "o": "の"
+        },
+        "r": {
+            "a": "ら",
+            "i": "り",
+            "u": "る",
+            "e": "れ",
+            "o": "ろ"
+        },
+        "m": {
+            "a": "ま",
+            "i": "み",
+            "u": "む",
+            "e": "め",
+            "o": "も"
+        },
+        "h": {
+            "a": "は",
+            "i": "ひ",
+            "u": "ふ",
+            "e": "へ",
+            "o": "ほ"
+        },
+        "b": {
+            "a": "ば",
+            "i": "び",
+            "u": "ぶ",
+            "e": "べ",
+            "o": "ぼ"
+        },
+        "w": {
+            "a": "わ",
+            "i": "い",
+            "u": "う",
+            "e": "え",
+            "o": "お"
+        },
+    }
+
+    return columnMap[initial][final];
+}
+
+
+
 
 export function rendaku(reading:string) {
     const rendakuMap : { [x: string] : string } = {

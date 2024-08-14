@@ -2,6 +2,7 @@ import { JPToken, PartOfSpeech } from "@/util/token-type"
 import styles from "./token-preview.module.css"
 import React, { useEffect, useMemo, useState } from "react";
 import { Definition, useDefinition, useKanjiKanaTokens, useReadings } from "../token-context/TokenContext";
+import Link from "next/link";
 
 
 
@@ -97,6 +98,7 @@ export default function TokenPreview({ token } : { token: null|JPToken}) {
     // console.log(generateFurigana("立ち向かう", "たちむかう"));
     if(token && definitions)
         return <div className={styles["container"]}>
+            <Link href={`https://en.wiktionary.org/wiki/${token.base ?? token.token}#Japanese`} target="_blank">Look &quot;{token.base ?? token.token}&quot; up on Wiktionary</Link><br/>
             <ul className={styles["readings-list"]}>
                 {
                     definitions.map((definition, i) => {
@@ -112,6 +114,7 @@ export default function TokenPreview({ token } : { token: null|JPToken}) {
         </div>
     else if(token) {
         return <div className={styles["container"]}>
+            <Link href={`https://en.wiktionary.org/wiki/${token.base ?? token.token}#Japanese`} target="_blank">Look &quot;{token.base ?? token.token}&quot; up on Wiktionary</Link><br/>
             <span className={styles["preview"]}>
                 <strong>{token.token}</strong>
             </span>
